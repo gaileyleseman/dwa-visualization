@@ -64,6 +64,7 @@ class DWA_Viz(QtWidgets.QMainWindow):
 
         # DWA
         self.viz = []
+        self.obstacles = []
 
         # test data for matplotlib
         n_data = 50
@@ -99,11 +100,13 @@ class DWA_Viz(QtWidgets.QMainWindow):
         ax.set_aspect('equal')
 
     def start(self):
+        self.reset()
         self.init_objects()
-        self.viz = generate_robot_viz(self.bot)
+        self.viz_objects()
         self.timer.start()
 
     def reset(self):
+        self.obstacles = []
         self.timer.stop()
 
     def path_planning(self):
@@ -114,6 +117,17 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.goal_pos = (self.goal_x.value(), self.goal_y.value())
         self.bot = Robot(self.start_pos, self.p)
 
+        for i in range(0, self.p.n_obstacles):
+            x = random.randint(0, self.p.grid_size)
+            y = random.randint(0, self.p.grid_size)
+            self.obstacles.append(Obstacle(x, y, self.p.r_obstacle))
+
+
+    def viz_objects(self):
+        self.viz = generate_robot_viz(self.bot)
+        self.viz.append((Circle(self.goal_pos, 0.2, color='limegreen')))
+        for obstacle in self.obstacles:
+            self.viz.append((Circle((obstacle.x, obstacle.y), obstacle.r, color='black')))
 
 
 

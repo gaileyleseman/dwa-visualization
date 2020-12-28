@@ -33,7 +33,7 @@ class Robot:
             self.y += -(self.v/self.omega) * (math.cos(self.theta) + math.cos(self.theta + self.omega * self.p.dt))
 
 
-class Object:
+class Obstacle:
     def __init__(self, x, y, r):
         self.x = x
         self.y = y
