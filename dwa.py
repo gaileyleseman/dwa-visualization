@@ -92,11 +92,9 @@ def admissible_paths(bot, window, obstacles):
         for omega in np.arange(min_omega, max_omega, bot.p.omega_step):
             path = RobotPath(bot, v, omega, False)
             collision, distance = check_collision(bot, path, obstacles)
-            """
             if not collision:
                 path.dist = distance
                 paths.append(path)
-            """
     return paths
 
 

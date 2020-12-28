@@ -114,8 +114,12 @@ class DWA_Viz(QtWidgets.QMainWindow):
 
     def path_planning(self):
         if self.timer.isActive():
-            window = dynamic_window(self.bot)
-            self.paths = admissible_paths(self.bot, window, self.obstacles)
+            if not self.reached_goal:
+                #window = dynamic_window(self.bot)
+                #self.paths = admissible_paths(self.bot, window, self.obstacles)
+                self.viz_objects()
+                self.bot.update_state(0.1, 0.1)
+                print(self.bot.x, self.bot.y)
         self.update_plot()
 
     def init_objects(self):
@@ -130,10 +134,14 @@ class DWA_Viz(QtWidgets.QMainWindow):
 
 
     def viz_objects(self):
+        self.viz = []
         self.viz = generate_robot_viz(self.bot)
         self.viz.append((Circle(self.goal_pos, 0.2, color='limegreen')))
         for obstacle in self.obstacles:
             self.viz.append((Circle((obstacle.x, obstacle.y), obstacle.r, color='black')))
+        for path in self.paths:
+            viz_path = generate_path_viz(path, self.p.grid_size)
+            self.viz.append(viz_path)
 
 
 
