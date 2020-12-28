@@ -31,10 +31,10 @@ class Robot:
         self.theta += self.omega * self.p.dt
         if self.omega == 0:  # straight line
             self.x += self.v * math.cos(self.theta) * self.p.dt
-            self.y += self.omega + math.sin(self.theta) * self.p.dt
+            self.y += self.v + math.sin(self.theta) * self.p.dt
         else:  # circular trajectory
             self.x += (self.v / self.omega) * (math.sin(self.theta) + math.sin(self.theta + self.omega * self.p.dt))
-            self.y += -(self.v / self.omega) * (math.cos(self.theta) + math.cos(self.theta + self.omega * self.p.dt))
+            self.y += (self.v / self.omega) * (math.cos(self.theta) + math.cos(self.theta + self.omega * self.p.dt))
 
 
 class RobotPath:

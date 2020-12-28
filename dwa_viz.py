@@ -115,11 +115,11 @@ class DWA_Viz(QtWidgets.QMainWindow):
     def path_planning(self):
         if self.timer.isActive():
             if not self.reached_goal:
-                #window = dynamic_window(self.bot)
-                #self.paths = admissible_paths(self.bot, window, self.obstacles)
+                window = dynamic_window(self.bot)
+                self.paths = admissible_paths(self.bot, window, self.obstacles)
                 self.viz_objects()
-                self.bot.update_state(0.1, 0.1)
-                print(self.bot.x, self.bot.y)
+                self.bot.update_state(0.01, 0.1)
+                print(self.bot.x, self.bot.y, self.bot.theta)
         self.update_plot()
 
     def init_objects(self):
