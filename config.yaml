@@ -1,0 +1,17 @@
+# Robot Hardware specs
+max_v: 0.95         # [m/s] max velocity
+min_v: 0.05         # [m/s] min velocity
+max_omega: 1        # [rad/s] max angular velocity
+max_a: 0.5          # [m/s^2] max acceleration
+max_alpha: 1.0      # [rad/s^2] max angular acceleration
+r: 0.5              # [m] robot radius
+
+# Dynamic Window
+v_step: 0.02        # [m/s] velocity step size
+omega_step: 0.02    # [rad/s] angular velocity step size
+dt: 0.25            # [s] time step
+
+# Optimization
+gain_alpha: 0.8     # heading
+gain_beta: 0.1      # clearance
+gain_gamma: 0.1     # speed
