@@ -18,6 +18,7 @@ class DWA_Viz(QMainWindow):
         self.setWindowTitle("Visualization Dynamic Window Approach")
         self.setGeometry(50, 50, 1000, 750)
 
+        # Widgets
         grid_size = 10
         self.start_x = QSpinBox()
         self.start_y = QSpinBox()
@@ -27,11 +28,14 @@ class DWA_Viz(QMainWindow):
         self.start_y.setRange(0, grid_size)
         self.goal_x.setRange(0, grid_size)
         self.goal_y.setRange(0, grid_size)
-        self.start = QPushButton("Start")
-        self.reset = QPushButton("Reset")
+        self.start_bth = QPushButton("Start")
+        self.reset_btn = QPushButton("Reset")
+        self.start_bth.clicked.connect(lambda: self.start())
+        self.reset_btn.clicked.connect(lambda: self.reset())
 
         self.canvas = MplCanvas(width=8, height=8, dpi=100)
 
+        # Layout
         self.layout = QGridLayout()
         self.layout.addWidget(QLabel("Start: (x,y)"), 0, 0)
         self.layout.addWidget(QLabel("Goal: (x,y)"), 1, 0)
@@ -39,13 +43,25 @@ class DWA_Viz(QMainWindow):
         self.layout.addWidget(self.start_y, 0, 2)
         self.layout.addWidget(self.goal_x, 1, 1)
         self.layout.addWidget(self.goal_y, 1, 2)
-        self.layout.addWidget(self.start, 2, 1)
-        self.layout.addWidget(self.reset, 2, 2)
+        self.layout.addWidget(self.start_btn, 2, 1)
+        self.layout.addWidget(self.reset_btn, 2, 2)
         self.layout.addWidget(self.canvas, 0, 3, 6, 6)
 
         widget = QWidget()
         widget.setLayout(self.layout)
         self.setCentralWidget(widget)
+
+    def start(self):
+        pass
+
+    def reset(self):
+        pass
+
+    def dwa_controller(self):
+        pass
+
+    def update_plot(self):
+        pass
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
