@@ -36,6 +36,10 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.goal_x = QSpinBox()
         self.goal_y = QSpinBox()
         self.start_x.setRange(0, self.p.grid_size)
+        self.start_x.setValue(1)
+        self.start_y.setValue(1)
+        self.goal_x.setValue(self.p.grid_size - 1)
+        self.goal_y.setValue(self.p.grid_size - 1)
         self.start_y.setRange(0, self.p.grid_size)
         self.goal_x.setRange(0, self.p.grid_size)
         self.goal_y.setRange(0, self.p.grid_size)
@@ -65,6 +69,7 @@ class DWA_Viz(QtWidgets.QMainWindow):
         # DWA
         self.viz = []
         self.obstacles = []
+        self.paths = []
 
         # test data for matplotlib
         n_data = 50
@@ -73,8 +78,6 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.update_plot()
 
         self.show()
-
-
 
         # Setup a timer to trigger the redraw by calling update_plot.
         self.timer = QtCore.QTimer()
@@ -110,6 +113,9 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.timer.stop()
 
     def path_planning(self):
+        if self.timer.isActive():
+            window = dynamic_window(self.bot)
+            self.paths = admissible_paths(self.bot, window, self.obstacles)
         self.update_plot()
 
     def init_objects(self):
@@ -139,7 +145,19 @@ def generate_robot_viz(bot):
     bot_heading = Arrow(bot.x, bot.y, dx, dy, width=0.2, color='darkblue')
     return [bot_body, bot_heading]
 
+def generate_path_viz(path, grid_size):
+    if path.optimal:
+        line_color = 'red'
+    else:
+        line_color = 'grey'
 
+    if path.type == 'curved':
+        path_viz = Arc((path.x, path.y), path.r * 2, path.r * 2, path.angle, path.start, path.end, color=line_color)
+    else:
+        x = min(max(path.x, 0), grid_size)
+        y = min(max(path.y, 0), grid_size)
+        path_viz = ConnectionPatch((path.xA, path.yA), (x, y), "data", "data", color=line_color)
+    return path_viz
 
 app = QtWidgets.QApplication(sys.argv)
 w = DWA_Viz()
