@@ -1,22 +1,30 @@
 import sys
-from PyQt5 import QtCore
+import random
+import matplotlib
+matplotlib.use('Qt5Agg')
+
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGridLayout, QWidget, QLabel, QSpinBox, QPushButton
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from matplotlib.patches import Circle, Arrow, Arc, ConnectionPatch
+
 
 class MplCanvas(FigureCanvas):
-    def __init__(self, width=8, height=8, dpi=100):
+
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = fig.add_subplot(111)
         super(MplCanvas, self).__init__(fig)
 
-class DWA_Viz(QMainWindow):
-    def __init__(self):
-        super(DWA_Viz, self).__init__()
+
+class DWA_Viz(QtWidgets.QMainWindow):
+
+    def __init__(self, *args, **kwargs):
+        super(DWA_Viz, self).__init__(*args, **kwargs)
         self.setWindowTitle("Visualization Dynamic Window Approach")
         self.setGeometry(50, 50, 1000, 750)
+        self.reached_goal = False
 
         # Widgets
         grid_size = 10
@@ -28,17 +36,17 @@ class DWA_Viz(QMainWindow):
         self.start_y.setRange(0, grid_size)
         self.goal_x.setRange(0, grid_size)
         self.goal_y.setRange(0, grid_size)
-        self.start_bth = QPushButton("Start")
+        self.start_btn = QPushButton("Start")
         self.reset_btn = QPushButton("Reset")
-        self.start_bth.clicked.connect(lambda: self.start())
-        self.reset_btn.clicked.connect(lambda: self.reset())
+        self.start_btn.clicked.connect(self.start)
+        self.reset_btn.clicked.connect(self.reset)
 
-        self.canvas = MplCanvas(width=8, height=8, dpi=100)
+        self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
 
         # Layout
         self.layout = QGridLayout()
-        self.layout.addWidget(QLabel("Start: (x,y)"), 0, 0)
-        self.layout.addWidget(QLabel("Goal: (x,y)"), 1, 0)
+        self.layout.addWidget(QLabel("Start (x,y):"), 0, 0)
+        self.layout.addWidget(QLabel("Goal (x,y):"), 1, 0)
         self.layout.addWidget(self.start_x, 0, 1)
         self.layout.addWidget(self.start_y, 0, 2)
         self.layout.addWidget(self.goal_x, 1, 1)
@@ -49,22 +57,40 @@ class DWA_Viz(QMainWindow):
 
         widget = QWidget()
         widget.setLayout(self.layout)
+
         self.setCentralWidget(widget)
 
-    def start(self):
-        pass
+        n_data = 50
+        self.xdata = list(range(n_data))
+        self.ydata = [random.randint(0, 10) for i in range(n_data)]
+        self.update_plot()
 
-    def reset(self):
-        pass
+        self.show()
 
-    def dwa_controller(self):
-        pass
+        # Setup a timer to trigger the redraw by calling update_plot.
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(100)
+        self.timer.timeout.connect(self.path_planning)
+
 
     def update_plot(self):
-        pass
+        # Drop off the first y element, append a new one.
+        self.ydata = self.ydata[1:] + [random.randint(0, 10)]
+        self.canvas.axes.cla()  # Clear the canvas.
+        self.canvas.axes.plot(self.xdata, self.ydata, 'r')
+        # Trigger the canvas to update and redraw.
+        self.canvas.draw()
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = DWA_Viz()
-    window.show()
-    sys.exit(app.exec_())
+    def start(self):
+        self.timer.start()
+
+    def reset(self):
+        self.timer.stop()
+
+    def path_planning(self):
+        self.update_plot()
+
+
+app = QtWidgets.QApplication(sys.argv)
+w = DWA_Viz()
+app.exec_()
