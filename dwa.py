@@ -11,7 +11,7 @@ def get_params():
     with open('config.yaml') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
         p = Params(config)
-    return
+    return p
 
 class Robot:
     def __init__(self, start_pos, params):
@@ -33,7 +33,7 @@ class Robot:
             self.y += -(self.v/self.omega) * (math.cos(self.theta) + math.cos(self.theta + self.omega * self.p.dt))
 
 
-class Obstacle:
+class Object:
     def __init__(self, x, y, r):
         self.x = x
         self.y = y

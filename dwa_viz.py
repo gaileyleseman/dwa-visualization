@@ -8,6 +8,9 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QGridLayout, QWidget, QLa
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from matplotlib.patches import Circle, Arrow, Arc, ConnectionPatch
+
+from dwa import *
 
 
 class MplCanvas(FigureCanvas):
@@ -24,18 +27,18 @@ class DWA_Viz(QtWidgets.QMainWindow):
         super(DWA_Viz, self).__init__(*args, **kwargs)
         self.setWindowTitle("Visualization Dynamic Window Approach")
         self.setGeometry(50, 50, 1000, 750)
+        self.p = get_params()
         self.reached_goal = False
 
         # Widgets
-        grid_size = 10
         self.start_x = QSpinBox()
         self.start_y = QSpinBox()
         self.goal_x = QSpinBox()
         self.goal_y = QSpinBox()
-        self.start_x.setRange(0, grid_size)
-        self.start_y.setRange(0, grid_size)
-        self.goal_x.setRange(0, grid_size)
-        self.goal_y.setRange(0, grid_size)
+        self.start_x.setRange(0, self.p.grid_size)
+        self.start_y.setRange(0, self.p.grid_size)
+        self.goal_x.setRange(0, self.p.grid_size)
+        self.goal_y.setRange(0, self.p.grid_size)
         self.start_btn = QPushButton("Start")
         self.reset_btn = QPushButton("Reset")
         self.start_btn.clicked.connect(self.start)
@@ -57,15 +60,20 @@ class DWA_Viz(QtWidgets.QMainWindow):
 
         widget = QWidget()
         widget.setLayout(self.layout)
-
         self.setCentralWidget(widget)
 
+        # DWA
+        self.viz = []
+
+        # test data for matplotlib
         n_data = 50
         self.xdata = list(range(n_data))
         self.ydata = [random.randint(0, 10) for i in range(n_data)]
         self.update_plot()
 
         self.show()
+
+
 
         # Setup a timer to trigger the redraw by calling update_plot.
         self.timer = QtCore.QTimer()
@@ -78,10 +86,21 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.ydata = self.ydata[1:] + [random.randint(0, 10)]
         self.canvas.axes.cla()  # Clear the canvas.
         self.canvas.axes.plot(self.xdata, self.ydata, 'r')
+        for patch in self.viz:
+            self.canvas.axes.add_patch(patch)
         # Trigger the canvas to update and redraw.
+        self.plot_layout()
         self.canvas.draw()
 
+    def plot_layout(self):
+        ax = self.canvas.axes
+        ax.set_xlim(0, self.p.grid_size)
+        ax.set_ylim(0, self.p.grid_size)
+        ax.set_aspect('equal')
+
     def start(self):
+        self.init_objects()
+        self.viz = generate_robot_viz(self.bot)
         self.timer.start()
 
     def reset(self):
@@ -89,6 +108,23 @@ class DWA_Viz(QtWidgets.QMainWindow):
 
     def path_planning(self):
         self.update_plot()
+
+    def init_objects(self):
+        self.start_pos = (self.start_x.value(), self.start_y.value())
+        self.goal_pos = (self.goal_x.value(), self.goal_y.value())
+        self.bot = Robot(self.start_pos, self.p)
+
+
+
+
+def generate_robot_viz(bot):
+    r = bot.p.r_bot
+    dx = r * math.cos(bot.theta)
+    dy = r * math.sin(bot.theta)
+    bot_body = Circle((bot.x, bot.y), r, color='cornflowerblue')
+    bot_heading = Arrow(bot.x, bot.y, dx, dy, width=0.2, color='darkblue')
+    return [bot_body, bot_heading]
+
 
 
 app = QtWidgets.QApplication(sys.argv)
