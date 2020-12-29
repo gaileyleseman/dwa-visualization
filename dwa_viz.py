@@ -108,12 +108,11 @@ class DWA_Viz(QtWidgets.QMainWindow):
         if self.timer.isActive():
             if not self.reached_goal:
                 window = dynamic_window(self.bot)
-                self.paths = [RobotPath(self.bot, 0.01, -0.1)] #(self.bot, window, self.obstacles)
+                self.paths = admissible_paths(self.bot, window, self.obstacles)
                 optimal = find_optimum(self.bot, self.paths, self.goal_pos, self.p)
                 self.paths.append(optimal)
                 self.viz_objects()
                 self.bot.update_state(optimal.v, optimal.omega)
-                print(self.bot.v, self.bot.omega)
         self.update_plot()
 
     def init_objects(self):

@@ -57,18 +57,18 @@ class RobotPath:
             self.r = self.v / self.omega
             self.type = 'curved'
             if self.omega > 0:
-                self.angle = bot.theta - math.pi / 2
+                self.angle = bot.theta + math.pi / 2
                 self.x = bot.x + self.r * math.cos(self.angle)
                 self.y = bot.y + self.r * math.sin(self.angle)
-                self.start = 90
-                self.end = 180
+                self.start = -90
+                self.end = 0
             else:
                 self.angle = bot.theta + math.pi / 2
-                self.x = bot.x - self.r * math.cos(self.angle)
-                self.y = bot.y - self.r * math.sin(self.angle)
-                self.start = 0
-                self.end = 90
-            self.angle = math.degrees(self.angle)
+                self.x = bot.x + self.r * math.cos(self.angle)
+                self.y = bot.y + self.r * math.sin(self.angle)
+                self.start = 180
+                self.end = 270
+            self.angle = math.degrees(bot.theta)
 
 
 class Obstacle:
@@ -102,7 +102,7 @@ def admissible_paths(bot, window, obstacles):
 
 def find_optimum(bot, paths, goal_pos, p):
     G = 0.0
-    optimum = RobotPath(bot, 0.1, 0.1)
+    optimum = RobotPath(bot, 0, 0)
     goal_x = goal_pos[0]
     goal_y = goal_pos[1]
     for path in paths:
