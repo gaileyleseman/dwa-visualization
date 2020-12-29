@@ -71,12 +71,7 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.obstacles = []
         self.paths = []
 
-        # test data for matplotlib
-        n_data = 50
-        self.xdata = list(range(n_data))
-        self.ydata = [random.randint(0, 10) for i in range(n_data)]
         self.update_plot()
-
         self.show()
 
         # Setup a timer to trigger the redraw by calling update_plot.
@@ -86,10 +81,7 @@ class DWA_Viz(QtWidgets.QMainWindow):
 
 
     def update_plot(self):
-        # Drop off the first y element, append a new one.
-        self.ydata = self.ydata[1:] + [random.randint(0, 10)]
         self.canvas.axes.cla()  # Clear the canvas.
-        self.canvas.axes.plot(self.xdata, self.ydata, 'r')
         for patch in self.viz:
             self.canvas.axes.add_patch(patch)
         # Trigger the canvas to update and redraw.
@@ -116,10 +108,12 @@ class DWA_Viz(QtWidgets.QMainWindow):
         if self.timer.isActive():
             if not self.reached_goal:
                 window = dynamic_window(self.bot)
-                self.paths = admissible_paths(self.bot, window, self.obstacles)
+                self.paths = [RobotPath(self.bot, 0.01, -0.1)] #(self.bot, window, self.obstacles)
+                optimal = find_optimum(self.bot, self.paths, self.goal_pos, self.p)
+                self.paths.append(optimal)
                 self.viz_objects()
-                self.bot.update_state(0.01, 0.1)
-                print(self.bot.x, self.bot.y, self.bot.theta)
+                self.bot.update_state(optimal.v, optimal.omega)
+                print(self.bot.v, self.bot.omega)
         self.update_plot()
 
     def init_objects(self):

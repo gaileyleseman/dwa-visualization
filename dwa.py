@@ -29,13 +29,16 @@ class Robot:
         self.v = v
         self.omega = omega
         self.theta += self.omega * self.p.dt
+        self.x += self.v * math.cos(self.theta) * self.p.dt
+        self.y += self.v * math.sin(self.theta) * self.p.dt
+        """
         if self.omega == 0:  # straight line
             self.x += self.v * math.cos(self.theta) * self.p.dt
-            self.y += self.v + math.sin(self.theta) * self.p.dt
+            self.y += self.v * math.sin(self.theta) * self.p.dt
         else:  # circular trajectory
             self.x += (self.v / self.omega) * (math.sin(self.theta) + math.sin(self.theta + self.omega * self.p.dt))
             self.y += (self.v / self.omega) * (math.cos(self.theta) + math.cos(self.theta + self.omega * self.p.dt))
-
+        """
 
 class RobotPath:
     def __init__(self, bot, v, omega, optimal=False):
@@ -96,6 +99,25 @@ def admissible_paths(bot, window, obstacles):
                 path.dist = distance
                 paths.append(path)
     return paths
+
+def find_optimum(bot, paths, goal_pos, p):
+    G = 0.0
+    optimum = RobotPath(bot, 0.1, 0.1)
+    goal_x = goal_pos[0]
+    goal_y = goal_pos[1]
+    for path in paths:
+        goal_angle = np.arctan2(goal_y - bot.y, goal_x - bot.x)
+        heading = abs(bot.theta - goal_angle)
+        dist = path.dist
+        vel = path.v
+
+        factors = np.array([p.gain_alpha * heading, p.gain_beta * dist, p.gain_gamma * vel])
+        G_temp = sum(factors)
+        if G_temp > G:
+            optimum = path
+            G = G_temp
+    optimum.optimal = True
+    return optimum
 
 
 def check_collision(bot, path, obstacles):
