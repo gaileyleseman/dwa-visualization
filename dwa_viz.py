@@ -132,10 +132,12 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.viz.append((Circle(self.goal_pos, 0.2, color='limegreen')))
         for obstacle in self.obstacles:
             self.viz.append((Circle((obstacle.x, obstacle.y), obstacle.r, color='black')))
+        count = 0
         for path in self.paths:
-            viz_path = generate_path_viz(path, self.p.grid_size)
-            self.viz.append(viz_path)
-
+            if count % 5 == 0:
+                viz_path = generate_path_viz(path, self.p.grid_size)
+                self.viz.append(viz_path)
+            count += 1
 
 
 def generate_robot_viz(bot):

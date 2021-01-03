@@ -113,9 +113,11 @@ def find_optimum(bot, paths, goal_pos, p):
         clearance = path.dist
         vel = path.v
 
-        factors = np.array([p.gain_alpha * heading, p.gain_beta * clearance, p.gain_gamma * vel])
+        factors = np.array([heading, clearance, vel])
         norm_factors = normalize(factors)
-        G_temp = sum(norm_factors)
+        norm_factors = norm_factors.reshape(3, 1)
+        gains = np.array([p.gain_alpha, p.gain_beta, p.gain_gamma])
+        G_temp = np.matmul(gains, norm_factors)
         if G_temp > G:
             optimum = path
             G = G_temp
