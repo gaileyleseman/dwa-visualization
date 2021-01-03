@@ -40,6 +40,7 @@ class Robot:
             self.y += (self.v / self.omega) * (math.cos(self.theta) + math.cos(self.theta + self.omega * self.p.dt))
         """
 
+
 class RobotPath:
     def __init__(self, bot, v, omega, optimal=False):
         self.v = v
@@ -100,6 +101,7 @@ def admissible_paths(bot, window, obstacles):
                 paths.append(path)
     return paths
 
+
 def find_optimum(bot, paths, goal_pos, p):
     G = 0.0
     optimum = RobotPath(bot, 0, 0)
@@ -107,17 +109,27 @@ def find_optimum(bot, paths, goal_pos, p):
     goal_y = goal_pos[1]
     for path in paths:
         goal_angle = np.arctan2(goal_y - bot.y, goal_x - bot.x)
-        heading = abs(bot.theta - goal_angle)
-        dist = path.dist
+        heading = math.degrees(bot.theta - goal_angle)
+        clearance = path.dist
         vel = path.v
 
-        factors = np.array([p.gain_alpha * heading, p.gain_beta * dist, p.gain_gamma * vel])
-        G_temp = sum(factors)
+        factors = np.array([p.gain_alpha * heading, p.gain_beta * clearance, p.gain_gamma * vel])
+        norm_factors = normalize(factors)
+        G_temp = sum(norm_factors)
         if G_temp > G:
             optimum = path
             G = G_temp
     optimum.optimal = True
     return optimum
+
+def normalize(factors):
+    min_factor = min(factors)
+    max_factor = max(factors)
+    if max_factor - min_factor == 0:
+        norm_factors = np.zeros(len(factors))
+    else:
+        norm_factors = (factors - min_factor) / (max_factor - min_factor)
+    return  norm_factors
 
 
 def check_collision(bot, path, obstacles):
