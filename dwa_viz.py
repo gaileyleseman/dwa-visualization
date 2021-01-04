@@ -113,10 +113,8 @@ class DWA_Viz(QtWidgets.QMainWindow):
                 window = dynamic_window(self.bot)
                 self.paths = admissible_paths(self.bot, window, self.obstacles)
                 optimal = find_optimum(self.bot, self.paths, self.goal_pos, self.p)
-
                 self.viz_objects()
                 self.viz.append(generate_path_viz(optimal, self.p.grid_size))
-
                 self.bot.update_state(optimal.v, optimal.omega)
         self.update_plot()
 
@@ -156,6 +154,8 @@ def generate_robot_viz(bot):
 def generate_path_viz(path, grid_size):
     if path.optimal:
         line_color = 'red'
+    elif path.obstacle:
+        line_color = 'blue'
     else:
         line_color = 'grey'
 
