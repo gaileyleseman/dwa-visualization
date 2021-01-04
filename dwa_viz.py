@@ -102,6 +102,9 @@ class DWA_Viz(QtWidgets.QMainWindow):
 
     def reset(self):
         self.obstacles = []
+        self.canvas.axes.cla()
+        self.plot_layout()
+        self.canvas.draw()
         self.timer.stop()
 
     def path_planning(self):
@@ -110,8 +113,10 @@ class DWA_Viz(QtWidgets.QMainWindow):
                 window = dynamic_window(self.bot)
                 self.paths = admissible_paths(self.bot, window, self.obstacles)
                 optimal = find_optimum(self.bot, self.paths, self.goal_pos, self.p)
-                self.paths.append(optimal)
+
                 self.viz_objects()
+                self.viz.append(generate_path_viz(optimal, self.p.grid_size))
+
                 self.bot.update_state(optimal.v, optimal.omega)
         self.update_plot()
 

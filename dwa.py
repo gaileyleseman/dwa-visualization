@@ -109,7 +109,7 @@ def find_optimum(bot, paths, goal_pos, p):
     goal_y = goal_pos[1]
     for path in paths:
         goal_angle = np.arctan2(goal_y - bot.y, goal_x - bot.x)
-        heading = math.degrees(bot.theta - goal_angle)
+        heading = 180 - math.degrees(bot.theta - goal_angle)
         clearance = path.dist
         vel = path.v
 
@@ -131,7 +131,7 @@ def normalize(factors):
         norm_factors = np.zeros(len(factors))
     else:
         norm_factors = (factors - min_factor) / (max_factor - min_factor)
-    return  norm_factors
+    return norm_factors
 
 
 def check_collision(bot, path, obstacles):
