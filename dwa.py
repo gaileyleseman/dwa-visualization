@@ -103,7 +103,7 @@ def find_optimum(bot, paths, goal_pos, p):
     goal_y = goal_pos[1]
     for path in paths:
         goal_angle = np.arctan2(goal_y - bot.y, goal_x - bot.x)
-        heading = 180 - abs(math.degrees(bot.theta - goal_angle))
+        heading = 180 - (math.degrees(bot.theta - goal_angle) % 360)
         clearance = path.dist
         vel = path.v
 
