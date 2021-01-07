@@ -1,6 +1,7 @@
 import sys
 import random
 import matplotlib
+
 matplotlib.use('Qt5Agg')
 
 from PyQt5 import QtCore, QtWidgets
@@ -47,6 +48,8 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.reset_btn = QPushButton("Reset")
         self.start_btn.clicked.connect(self.start)
         self.reset_btn.clicked.connect(self.reset)
+        self.status_label = QLabel("Robot Status:")
+        self.status = QLabel("WAIT FOR START")
 
         self.canvas = MplCanvas(self, width=5, height=4, dpi=100)
 
@@ -60,7 +63,10 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.layout.addWidget(self.goal_y, 1, 2)
         self.layout.addWidget(self.start_btn, 2, 1)
         self.layout.addWidget(self.reset_btn, 2, 2)
+        self.layout.addWidget(self.status_label, 3, 0, 1, 2)
+        self.layout.addWidget(self.status, 3, 1, 1, 2)
         self.layout.addWidget(self.canvas, 0, 3, 6, 6)
+
 
         widget = QWidget()
         widget.setLayout(self.layout)
@@ -78,7 +84,6 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.timer = QtCore.QTimer()
         self.timer.setInterval(100)
         self.timer.timeout.connect(self.path_planning)
-
 
     def update_plot(self):
         self.canvas.axes.cla()  # Clear the canvas.
@@ -106,10 +111,14 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.plot_layout()
         self.canvas.draw()
         self.timer.stop()
+        self.status.setText("WAIT FOR START")
+        self.reached_goal = False
 
     def path_planning(self):
         if self.timer.isActive():
             if not self.reached_goal:
+                self.status.setText("PLANNING PATH")
+                self.check_goal_reached()
                 window = dynamic_window(self.bot)
                 self.paths = admissible_paths(self.bot, window, self.obstacles)
                 optimal = find_optimum(self.bot, self.paths, self.goal_pos, self.p)
@@ -130,21 +139,25 @@ class DWA_Viz(QtWidgets.QMainWindow):
             y = random.randint(0, self.p.grid_size)
             self.obstacles.append(Obstacle(x, y, self.p.r_obstacle))
 
-
     def viz_objects(self):
         self.viz = []
         self.viz = generate_robot_viz(self.bot)
-        self.viz.append((Circle(self.goal_pos, 0.2, color='limegreen')))
+        self.viz.append((Circle(self.goal_pos, self.p.r_obstacle, color='limegreen')))
         for obstacle in self.obstacles:
             self.viz.append((Circle((obstacle.x, obstacle.y), obstacle.r, color='black')))
         count = 0
-        divider = math.ceil(len(self.paths)/self.p.n_paths)
+        divider = math.ceil(len(self.paths) / self.p.n_paths)
         for path in self.paths:
             if count % divider == 0:
                 viz_path = generate_path_viz(path, self.p.grid_size)
                 self.viz.append(viz_path)
             count += 1
 
+    def check_goal_reached(self):
+        if self.bot.x - self.bot.p.r_bot < self.goal_pos[0] < self.bot.x + self.bot.p.r_bot and \
+                self.bot.y - self.bot.p.r_bot < self.goal_pos[1] < self.bot.y + self.bot.p.r_bot:
+            self.reached_goal = True
+            self.status.setText("REACHED GOAL")
 
 def generate_robot_viz(bot):
     r = bot.p.r_bot
@@ -153,6 +166,7 @@ def generate_robot_viz(bot):
     bot_body = Circle((bot.x, bot.y), r, color='cornflowerblue')
     bot_heading = Arrow(bot.x, bot.y, dx, dy, width=0.2, color='darkblue')
     return [bot_body, bot_heading]
+
 
 def generate_path_viz(path, grid_size):
     if path.optimal:
@@ -167,6 +181,7 @@ def generate_path_viz(path, grid_size):
         y = min(max(path.y, 0), grid_size)
         path_viz = ConnectionPatch((path.xA, path.yA), (x, y), "data", "data", color=line_color)
     return path_viz
+
 
 app = QtWidgets.QApplication(sys.argv)
 w = DWA_Viz()
