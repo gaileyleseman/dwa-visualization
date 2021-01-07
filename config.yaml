@@ -14,7 +14,7 @@ dt: 0.25            # [s] time step
 # Optimization
 large_dist: 1000    # arbitrary large value
 gain_alpha: 2.0     # heading
-gain_beta: 0.2      # clearance
+gain_beta: 2.0      # clearance
 gain_gamma: 0.2     # speed
 
 # Visualization

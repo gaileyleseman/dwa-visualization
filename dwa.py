@@ -160,15 +160,15 @@ def check_collision(bot, path, obstacles):
             if check_circle_collision(c_obs, c_path):
                 gamma_bot = np.arctan2(bot.y - path.y, bot.x - path.x)
                 gamma = np.arctan2(obstacle.y - path.y, obstacle.x - path.x)
-                dist = abs(gamma_bot - gamma) * abs(path.r)
+                dist = abs(gamma_bot - gamma) * abs(path.r)  # distance traveled on the curvature of the path
                 if dist < min_dist:
                     min_dist = dist
     else:
         for obstacle in obstacles:
-            gamma = np.arctan2(obstacle.y - bot.y, obstacle.x - bot.x)
             dist = np.sqrt((obstacle.x - bot.x) ** 2 + (obstacle.y - bot.y) ** 2)
-            delta_gamma = np.arcsin(obstacle.r / dist)
-            if bot.theta - delta_gamma < gamma < bot.theta + delta_gamma:
+            obs_gamma = np.arctan2(obstacle.y - bot.y, obstacle.x - bot.x)
+            delta_gamma = np.arcsin((bot.p.r_bot + obstacle.r) / dist)
+            if bot.theta - delta_gamma < obs_gamma < bot.theta + delta_gamma:
                 if dist < min_dist:
                     min_dist = dist
 

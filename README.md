@@ -2,6 +2,10 @@
 JetBrains assignment for the application at THERE Tech LAB. 
 Visualization of the Dynamic Window Approach path planning algorithm. 
 
+## Visualization
+
+
+
 ## Algorithm Implementation
 The implementation of the algorithm is heavily based on the paper of Fox et al. (1997). 
 
@@ -23,31 +27,33 @@ thus limited by the robots current velocity and its maximum acceleration/deceler
     
     1. _Target Heading:_ a measure of progress towards the goal location.
      
-        To consider the dynamics of the rotation, the bot heading is computed at the position which the robot will reach when 
-        exerting maximal deceleration after the next time interval. 
+        To consider the dynamics of the rotation, the bot heading is computed at the position which the robot 
+        will reach when exerting maximal deceleration after the next time interval. 
+        The target heading is maximal when the robot heading is aligned with the goal heading. 
+        
     2. _Clearance:_ the distance to the closest obstacle on the path.
     
         If there is no obstacle on the path this value is set to a large constant. 
         
     3. _Velocity:_ projection of the translational velocity v
     
-    All three factors are normalized to [0,1] and multiplied with a gain.
+    All three factors are normalized to [0,1] and multiplied with a gain. 
+    The sum of the three factors is maximized to find the optimal path. 
     
  1. ``` bot.update_state(v, omega)```
  
     The robot state is updated based on the optimal velocity inputs. 
  
  1. This process is repeated until the robot has reached the goal location. 
- 
-
-#### Visualization   
+  
 
 #### Collision Detection
 
 
-## Further Improvements
+## Possible improvements?
 - Add an extra margin around obstacles to avoid collision. 
 - Normalize the values based on the minimal and maximal values of the admissible paths of that time interval.
+
 
 
 

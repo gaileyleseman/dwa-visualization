@@ -121,7 +121,6 @@ class DWA_Viz(QtWidgets.QMainWindow):
                 window = dynamic_window(self.bot)
                 self.paths = admissible_paths(self.bot, window, self.obstacles)
                 optimal = find_optimum(self.bot, self.paths, self.goal_pos, self.p)
-
                 self.viz_objects()
                 self.viz.append(generate_path_viz(optimal, self.p.grid_size))
 
@@ -136,7 +135,7 @@ class DWA_Viz(QtWidgets.QMainWindow):
         while len(self.obstacles) < self.p.n_obstacles:
             x = random.randint(0, self.p.grid_size)
             y = random.randint(0, self.p.grid_size)
-            if self.check_valid_obstacle(x,y):
+            if self.check_valid_obstacle(x, y):  # avoids spawning on bot and goal location
                 self.obstacles.append(Obstacle(x, y, self.p.r_obstacle))
 
     def viz_objects(self):
