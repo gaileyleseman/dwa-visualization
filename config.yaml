@@ -1,7 +1,7 @@
 # Robot Hardware specs
-max_v: 0.95         # [m/s] max velocity
+max_v: 0.50         # [m/s] max velocity
 min_v: 0.05         # [m/s] min velocity
-max_omega: 1        # [rad/s] max angular velocity
+max_omega: 1.0      # [rad/s] max angular velocity
 max_a: 0.5          # [m/s^2] max acceleration
 max_alpha: 1.0      # [rad/s^2] max angular acceleration
 r_bot: 0.5          # [m] robot radius
@@ -12,12 +12,13 @@ omega_step: 0.02    # [rad/s] angular velocity step size
 dt: 0.25            # [s] time step
 
 # Optimization
+large_dist: 1000    # arbitrary large value
 gain_alpha: 2.0     # heading
-gain_beta: 0.2      # clearance
+gain_beta: 2.0      # clearance
 gain_gamma: 0.2     # speed
 
-
 # Visualization
-n_obstacles: 5      # number of obstacles
-grid_size: 10       # max grid size
-r_obstacle: 0.5     # [m] obstacle radius
+n_obstacles: 15     # number of obstacles
+grid_size: 15       # max grid size
+r_obstacle: 0.25    # [m] obstacle radius
+n_paths: 10         # number of visualized paths
