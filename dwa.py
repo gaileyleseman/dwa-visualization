@@ -22,7 +22,8 @@ class Robot:
         # initialize robot state
         self.x = start_pos[0]
         self.y = start_pos[1]
-        self.theta = self.v = self.omega = 0
+        self.v = self.omega = 0
+        self.theta = math.pi/2
         self.p = params
 
     def update_state(self, v, omega):
@@ -71,7 +72,7 @@ class RobotPath:
         self.v = v
         self.omega = omega
         self.optimal = False
-        self.dist = 1000
+        self.dist = bot.p.large_dist
 
         if self.omega == 0:
             self.type = 'straight'
@@ -119,7 +120,7 @@ def admissible_paths(bot, window, obstacles):
     paths = []
     for v in np.arange(min_v, max_v, bot.p.v_step):
         for omega in np.arange(min_omega, max_omega, bot.p.omega_step):
-            path = RobotPath(bot, v, omega)
+            path = RobotPath(bot, round(v, 2),  round(omega, 2))
             collision, distance = check_collision(bot, path, obstacles)
             if not collision:
                 path.dist = distance
@@ -139,29 +140,28 @@ def find_optimum(bot, paths, goal_pos, p):
         goal_angle = np.arctan2(goal_y - bot.y, goal_x - bot.x)
         heading_diff = abs(math.degrees(sim_state[2] - goal_angle)) % 360
         target_heading = 180 - heading_diff   # maximized if fully aligned
+        print(target_heading)
         # distance
         clearance = path.dist
         # velocity
         vel = path.v
 
         factors = np.array([target_heading, clearance, vel])
-        norm_factors = normalize(factors)
+        norm_factors = normalize(bot, factors)
         norm_factors = norm_factors.reshape(3, 1)
         gains = np.array([p.gain_alpha, p.gain_beta, p.gain_gamma])
         G_temp = np.matmul(gains, norm_factors)
+        print(gains, norm_factors)
         if G_temp > G:
             optimum = path
             G = G_temp
     optimum.optimal = True
     return optimum
 
-def normalize(factors):
-    min_factor = min(factors)
-    max_factor = max(factors)
-    if max_factor - min_factor == 0:
-        norm_factors = np.zeros(len(factors))
-    else:
-        norm_factors = (factors - min_factor) / (max_factor - min_factor)
+def normalize(bot, factors):
+    min_factors = np.array([-180, 0, bot.p.min_v])
+    max_factors = np.array([180, bot.p.large_dist, bot.p.max_v])
+    norm_factors = (factors - min_factors) / (max_factors - min_factors)
     return norm_factors
 
 
