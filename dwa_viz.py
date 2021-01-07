@@ -138,8 +138,9 @@ class DWA_Viz(QtWidgets.QMainWindow):
         for obstacle in self.obstacles:
             self.viz.append((Circle((obstacle.x, obstacle.y), obstacle.r, color='black')))
         count = 0
+        divider = math.ceil(len(self.paths)/self.p.n_paths)
         for path in self.paths:
-            if count % 5 == 0:
+            if count % divider == 0:
                 viz_path = generate_path_viz(path, self.p.grid_size)
                 self.viz.append(viz_path)
             count += 1

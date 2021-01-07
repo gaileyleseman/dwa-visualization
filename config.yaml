@@ -17,8 +17,8 @@ gain_alpha: 2.0     # heading
 gain_beta: 0.2      # clearance
 gain_gamma: 0.2     # speed
 
-
 # Visualization
-n_obstacles: 5      # number of obstacles
+n_obstacles: 10     # number of obstacles
 grid_size: 15       # max grid size
-r_obstacle: 0.25     # [m] obstacle radius
+r_obstacle: 0.25    # [m] obstacle radius
+n_paths: 10         # number of visualized paths
