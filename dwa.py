@@ -23,7 +23,7 @@ class Robot:
         self.x = start_pos[0]
         self.y = start_pos[1]
         self.v = self.omega = 0
-        self.theta = math.pi/2
+        self.theta = math.pi / 2
         self.p = params
 
     def update_state(self, v, omega):
@@ -52,7 +52,6 @@ class Robot:
         y_sim += v * math.sin(theta_sim) * self.p.dt
 
         return [x_sim, y_sim, theta_sim]
-
 
 
 class RobotPath:
@@ -108,7 +107,7 @@ def admissible_paths(bot, window, obstacles):
     paths = []
     for v in np.arange(min_v, max_v, bot.p.v_step):
         for omega in np.arange(min_omega, max_omega, bot.p.omega_step):
-            path = RobotPath(bot, round(v, 2),  round(omega, 2))
+            path = RobotPath(bot, round(v, 2), round(omega, 2))
             collision, distance = check_collision(bot, path, obstacles)
             if not collision:
                 path.dist = distance
@@ -127,7 +126,7 @@ def find_optimum(bot, paths, goal_pos, p):
         # heading
         goal_angle = np.arctan2(goal_y - bot.y, goal_x - bot.x)
         heading_diff = abs(math.degrees(sim_state[2] - goal_angle)) % 360
-        target_heading = 180 - heading_diff   # maximized if fully aligned
+        target_heading = 180 - heading_diff  # maximized if fully aligned
         # distance
         clearance = path.dist
         # velocity
@@ -137,12 +136,13 @@ def find_optimum(bot, paths, goal_pos, p):
         norm_factors = normalize(bot, factors)
         norm_factors = norm_factors.reshape(3, 1)
         gains = np.array([p.gain_alpha, p.gain_beta, p.gain_gamma])
-        G_temp = np.matmul(gains, norm_factors)     # score for this path
+        G_temp = np.matmul(gains, norm_factors)  # score for this path
         if G_temp > G:
             optimum = path
             G = G_temp
     optimum.optimal = True
     return optimum
+
 
 def normalize(bot, factors):
     min_factors = np.array([-180, 0, bot.p.min_v])
