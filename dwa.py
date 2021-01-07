@@ -182,6 +182,6 @@ def check_circle_collision(c_obs, c_path):
     [x_obs, y_obs, r_obs] = c_obs
     [x, y, r_in, r_out] = c_path
     dist = math.sqrt((x_obs - x) ** 2 + (y_obs - y) ** 2)  # distance center to center
-    if (r_out + r_obs) >= dist > (r_in - r_obs):
+    if (r_out + r_obs) >= dist > max((r_in - r_obs), 0):
         return True
     return False
