@@ -50,6 +50,10 @@ thus limited by the robots current velocity and its maximum acceleration/deceler
 
 #### Collision Detection
 Graphical representation as an aid to understand the collision detection. 
+On a curved path the center-to-center distance of the path and obstacle is compared to the grey collision area. 
+On a straight path a collision is detected if the angle between the obstacle and the robot falls between some angle 
+(depending on the distance) around the robot's heading. When the distance to the obstacle is greater than the breaking
+distance of the robot the path is marked as safe. 
 ![Collision Detection](collision_detection.png)
 
 ## Possible improvements?
