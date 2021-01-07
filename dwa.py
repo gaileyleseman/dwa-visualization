@@ -53,10 +53,6 @@ class Robot:
 
         # maximum deacceleration
         v += -self.p.max_a * self.p.dt
-        if omega > 0:
-            omega += -self.p.max_alpha * self.p.dt
-        else:
-            omega += self.p.max_alpha * self.p.dt
 
         # second time interval
         theta_sim += omega * self.p.dt
@@ -140,7 +136,6 @@ def find_optimum(bot, paths, goal_pos, p):
         goal_angle = np.arctan2(goal_y - bot.y, goal_x - bot.x)
         heading_diff = abs(math.degrees(sim_state[2] - goal_angle)) % 360
         target_heading = 180 - heading_diff   # maximized if fully aligned
-        print(target_heading)
         # distance
         clearance = path.dist
         # velocity
@@ -150,8 +145,7 @@ def find_optimum(bot, paths, goal_pos, p):
         norm_factors = normalize(bot, factors)
         norm_factors = norm_factors.reshape(3, 1)
         gains = np.array([p.gain_alpha, p.gain_beta, p.gain_gamma])
-        G_temp = np.matmul(gains, norm_factors)
-        print(gains, norm_factors)
+        G_temp = np.matmul(gains, norm_factors)     # score for this path
         if G_temp > G:
             optimum = path
             G = G_temp

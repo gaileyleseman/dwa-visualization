@@ -1,5 +1,5 @@
 # Robot Hardware specs
-max_v: 0.95         # [m/s] max velocity
+max_v: 0.50         # [m/s] max velocity
 min_v: 0.05         # [m/s] min velocity
 max_omega: 1        # [rad/s] max angular velocity
 max_a: 0.5          # [m/s^2] max acceleration
