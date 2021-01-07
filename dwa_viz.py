@@ -67,7 +67,6 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.layout.addWidget(self.status, 3, 1, 1, 2)
         self.layout.addWidget(self.canvas, 0, 3, 6, 6)
 
-
         widget = QWidget()
         widget.setLayout(self.layout)
         self.setCentralWidget(widget)
@@ -134,10 +133,11 @@ class DWA_Viz(QtWidgets.QMainWindow):
         self.goal_pos = (self.goal_x.value(), self.goal_y.value())
         self.bot = Robot(self.start_pos, self.p)
 
-        for i in range(0, self.p.n_obstacles):
+        while len(self.obstacles) < self.p.n_obstacles:
             x = random.randint(0, self.p.grid_size)
             y = random.randint(0, self.p.grid_size)
-            self.obstacles.append(Obstacle(x, y, self.p.r_obstacle))
+            if self.check_valid_obstacle(x,y):
+                self.obstacles.append(Obstacle(x, y, self.p.r_obstacle))
 
     def viz_objects(self):
         self.viz = []
@@ -153,11 +153,22 @@ class DWA_Viz(QtWidgets.QMainWindow):
                 self.viz.append(viz_path)
             count += 1
 
+    def check_valid_obstacle(self, x, y):
+        r_margin = self.bot.p.r_bot + self.p.r_obstacle
+        x_check = [self.bot.x, self.goal_pos[0]]
+        y_check = [self.bot.y, self.goal_pos[1]]
+        for i in [0, 1]:
+            if x_check[i] - r_margin < x < x_check[i] + r_margin or \
+                    y_check[i] - r_margin < y < y_check[i] + r_margin:
+                return False
+        return True
+
     def check_goal_reached(self):
         if self.bot.x - self.bot.p.r_bot < self.goal_pos[0] < self.bot.x + self.bot.p.r_bot and \
                 self.bot.y - self.bot.p.r_bot < self.goal_pos[1] < self.bot.y + self.bot.p.r_bot:
             self.reached_goal = True
             self.status.setText("REACHED GOAL")
+
 
 def generate_robot_viz(bot):
     r = bot.p.r_bot

@@ -32,14 +32,6 @@ class Robot:
         self.theta += self.omega * self.p.dt
         self.x += self.v * math.cos(self.theta) * self.p.dt
         self.y += self.v * math.sin(self.theta) * self.p.dt
-        """
-        if self.omega == 0:  # straight line
-            self.x += self.v * math.cos(self.theta) * self.p.dt
-            self.y += self.v * math.sin(self.theta) * self.p.dt
-        else:  # circular trajectory
-            self.x += (self.v / self.omega) * (math.sin(self.theta) - math.sin(self.theta + self.omega * self.p.dt))
-            self.y += -(self.v / self.omega) * (math.cos(self.theta) - math.cos(self.theta + self.omega * self.p.dt))
-        """
 
     def simulate_state(self, v, omega):
         x_sim = self.x
@@ -51,7 +43,7 @@ class Robot:
         x_sim += v * math.cos(theta_sim) * self.p.dt
         y_sim += v * math.sin(theta_sim) * self.p.dt
 
-        # maximum deacceleration
+        # maximum deceleration
         v += -self.p.max_a * self.p.dt
 
         # second time interval
