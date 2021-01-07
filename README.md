@@ -63,6 +63,8 @@ When the distance to the obstacle is greater than the breaking distance of the r
 - Test more (edge) cases and test with different parameters. 
 - Add an extra margin around obstacles to avoid collision. 
 - Normalize the values based on the minimal and maximal values of the admissible paths of that time interval.
+- Adjust grid visualization to robot position
+- _Known Issue:_ Sometimes spiraling into obstacles after collision. Needs further debugging. 
 
 
 ## References
