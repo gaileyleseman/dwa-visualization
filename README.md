@@ -7,7 +7,9 @@ Visualization of the Dynamic Window Approach path planning algorithm.
 
 
 ## Algorithm Implementation
-The implementation of the algorithm is heavily based on the paper of Fox et al. (1997). 
+The implementation of the algorithm is heavily based on the paper of Fox et al. (1997), all functions for the algorithm 
+are defined in [dwa.py](/dwa.py). The visualization and user interface are defined in [dwa_viz.py](/dwa_viz.py). 
+All parameters can be set in the [configuration file](/config.yaml). 
 
 1. ```dynamic_window(bot)```
     
@@ -45,17 +47,15 @@ thus limited by the robots current velocity and its maximum acceleration/deceler
     The robot state is updated based on the optimal velocity inputs. 
  
  1. This process is repeated until the robot has reached the goal location. 
-  
 
 #### Collision Detection
 Graphical representation as an aid to understand the collision detection. 
 ![Collision Detection](collision_detection.png)
 
 ## Possible improvements?
+- Test more (edge) cases and test with different parameters. 
 - Add an extra margin around obstacles to avoid collision. 
 - Normalize the values based on the minimal and maximal values of the admissible paths of that time interval.
-
-
 
 
 ## References
