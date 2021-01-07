@@ -36,16 +36,41 @@ class Robot:
             self.x += self.v * math.cos(self.theta) * self.p.dt
             self.y += self.v * math.sin(self.theta) * self.p.dt
         else:  # circular trajectory
-            self.x += (self.v / self.omega) * (math.sin(self.theta) + math.sin(self.theta + self.omega * self.p.dt))
-            self.y += (self.v / self.omega) * (math.cos(self.theta) + math.cos(self.theta + self.omega * self.p.dt))
+            self.x += (self.v / self.omega) * (math.sin(self.theta) - math.sin(self.theta + self.omega * self.p.dt))
+            self.y += -(self.v / self.omega) * (math.cos(self.theta) - math.cos(self.theta + self.omega * self.p.dt))
         """
+
+    def simulate_state(self, v, omega):
+        x_sim = self.x
+        y_sim = self.y
+        theta_sim = self.theta
+
+        # first time interval
+        theta_sim += omega * self.p.dt
+        x_sim += v * math.cos(theta_sim) * self.p.dt
+        y_sim += v * math.sin(theta_sim) * self.p.dt
+
+        # maximum deacceleration
+        v += -self.p.max_a * self.p.dt
+        if omega > 0:
+            omega += -self.p.max_alpha * self.p.dt
+        else:
+            omega += self.p.max_alpha * self.p.dt
+
+        # second time interval
+        theta_sim += omega * self.p.dt
+        x_sim += v * math.cos(theta_sim) * self.p.dt
+        y_sim += v * math.sin(theta_sim) * self.p.dt
+
+        return [x_sim, y_sim, theta_sim]
+
 
 
 class RobotPath:
-    def __init__(self, bot, v, omega, optimal=False):
+    def __init__(self, bot, v, omega):
         self.v = v
         self.omega = omega
-        self.optimal = optimal
+        self.optimal = False
         self.dist = 1000
 
         if self.omega == 0:
@@ -94,7 +119,7 @@ def admissible_paths(bot, window, obstacles):
     paths = []
     for v in np.arange(min_v, max_v, bot.p.v_step):
         for omega in np.arange(min_omega, max_omega, bot.p.omega_step):
-            path = RobotPath(bot, v, omega, False)
+            path = RobotPath(bot, v, omega)
             collision, distance = check_collision(bot, path, obstacles)
             if not collision:
                 path.dist = distance
@@ -108,12 +133,18 @@ def find_optimum(bot, paths, goal_pos, p):
     goal_x = goal_pos[0]
     goal_y = goal_pos[1]
     for path in paths:
+        sim_state = bot.simulate_state(path.v, path.omega)
+
+        # heading
         goal_angle = np.arctan2(goal_y - bot.y, goal_x - bot.x)
-        heading = 180 - math.degrees(bot.theta - goal_angle)
+        heading_diff = abs(math.degrees(sim_state[2] - goal_angle)) % 360
+        target_heading = 180 - heading_diff   # maximized if fully aligned
+        # distance
         clearance = path.dist
+        # velocity
         vel = path.v
 
-        factors = np.array([heading, clearance, vel])
+        factors = np.array([target_heading, clearance, vel])
         norm_factors = normalize(factors)
         norm_factors = norm_factors.reshape(3, 1)
         gains = np.array([p.gain_alpha, p.gain_beta, p.gain_gamma])
