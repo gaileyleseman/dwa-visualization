@@ -3,7 +3,7 @@ JetBrains assignment for the application at THERE Tech LAB.
 Visualization of the Dynamic Window Approach path planning algorithm. 
 
 ## Visualization
-
+![Visualization Example](viz_example.gif)
 
 
 ## Algorithm Implementation
@@ -48,7 +48,8 @@ thus limited by the robots current velocity and its maximum acceleration/deceler
   
 
 #### Collision Detection
-
+Graphical representation as an aid to understand the collision detection. 
+![Collision Detection](collision_detection.png)
 
 ## Possible improvements?
 - Add an extra margin around obstacles to avoid collision. 

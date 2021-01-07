@@ -118,6 +118,7 @@ def find_optimum(bot, paths, goal_pos, p):
     optimum.optimal = True
     return optimum
 
+
 def normalize(factors):
     min_factor = min(factors)
     max_factor = max(factors)
