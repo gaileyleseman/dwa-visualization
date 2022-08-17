@@ -1,5 +1,5 @@
 # Visualization of the Dynamic Window Approach
-JetBrains assignment for the application at THERE Tech LAB. 
+Interview assignment in the application process for the role of Robotics Engineer at JetBrains Techlab. 
 Visualization of the Dynamic Window Approach path planning algorithm. 
 
 ## Visualization
