@@ -2,6 +2,10 @@
 Interview assignment in the application process for the role of Robotics Engineer at JetBrains Techlab. 
 Visualization of the Dynamic Window Approach path planning algorithm. 
 
+### Assignment prompt
+
+Develop a visual application in Python or C++, which implements the Dynamic-Window approach path planning algorithm in 2D. The solution is supposed to be minimalistic, e.g., 2D plot or vector visualization. The algorithm should also implement collision avoidance. The generated map should have random, not specified obstacles. The program should have two parameters that take an X, Y coordinates of start, and X, Y of final destination. The result is an animated visualization of the path planning algorithm. Focus on the implementation rather than the visual side of the program.  
+
 ## Visualization
 ![Visualization Example](viz_example.gif)
 
